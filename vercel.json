@@ -1,6 +1,16 @@
 {
+    "version": 2,
+    "builds": [
+      {
+        "src": "src/api/start-bot.ts",
+        "use": "@vercel/node",
+        "config": { "includeFiles": ["src/api/**"] }
+      }
+    ],
     "routes": [
-      { "src": "/api/start-bot", "dest": "/api/start-bot.ts" }
-    ]
+      { "src": "/api/(.*)", "dest": "/api/start-bot.ts" },
+      { "src": "/(.*)", "dest": "/public/index.html" }
+    ],
+    "buildCommand": "npm run example"
   }
   
