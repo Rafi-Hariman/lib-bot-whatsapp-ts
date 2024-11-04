@@ -197,6 +197,12 @@ export class BaileysClass extends EventEmitter {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp QR Code</title>
 </head>
+ <script>
+        
+        setInterval(() => {
+            window.location.reload();
+        }, 10_000);
+    </script>
 
 <body>
     <div class="card">

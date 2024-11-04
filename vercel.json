@@ -1,0 +1,6 @@
+{
+    "routes": [
+      { "src": "/api/start-bot", "dest": "/api/start-bot.ts" }
+    ]
+  }
+  
