@@ -253,7 +253,7 @@ export class BaileysClass extends EventEmitter {
 </html>`;
 
       // Write the HTML content to index.html
-      fs.writeFileSync(path.join(__dirname, "..", "index.html"), htmlContent);
+      fs.writeFileSync(path.join(__dirname, "..", "public", "index.html"), htmlContent);
     }
   };
 
