@@ -7,9 +7,7 @@
   "scripts": {
     "build": "tsc",
     "example": "tsc && node -r ts-node/register examples/bot.ts",
-    "vercel-build": "npm install && npm run build",
-    "start": "npm run example",
-    "vercel-start": "npm run example"
+    "vercel-build": "npm install && npm run build"
   },
   "repository": {
     "type": "git",
