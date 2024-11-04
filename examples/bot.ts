@@ -1,4 +1,12 @@
+import express from 'express';
 import { BaileysClass } from '../lib/baileys.js';
+import path from 'path';
+
+const app = express();
+const port = 3000;
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const botBaileys = new BaileysClass({});
 let awaitingResponse = false;
@@ -7,6 +15,18 @@ let userStep = 'welcome';
 botBaileys.on('auth_failure', async (error) => console.log("ERROR BOT: ", error));
 botBaileys.on('qr', (qr) => console.log("NEW QR CODE: ", qr));
 botBaileys.on('ready', async () => console.log('READY BOT'));
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
+// Optional: Add a route to check if the server is up
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+
 
 botBaileys.on('message', async (message) => {
     const positiveResponses = require('../user-response/confirmResponse.json');
