@@ -10,20 +10,18 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const botBaileys = new BaileysClass({});
 let awaitingResponse = false;
-let userStep = 'welcome';
+let userStep = 'initial_response';
 
 botBaileys.on('auth_failure', async (error) => console.log("ERROR BOT: ", error));
 botBaileys.on('qr', (qr) => console.log("NEW QR CODE: ", qr));
 botBaileys.on('ready', async () => console.log('READY BOT'));
 
-// Start the server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });
 
-// Optional: Add a route to check if the server is up
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 
@@ -32,35 +30,35 @@ botBaileys.on('message', async (message) => {
     const positiveResponses = require('../user-response/confirmResponse.json');
 
     const command = message.body.toLowerCase().trim();
-
+ 
     switch (userStep) {
-        case 'welcome':
-            await botBaileys.sendText(message.from, `Selamat datang di MenoPal, ${message.from}. MenoPal adalah chatbot interaktif yang dapat membantu Anda dalam mengetahui dan menentukan gangguan pada menstruasi. Apakah Anda tertarik untuk menggunakan bot ini?`);
-            userStep = 'initial_response';
+        
+        case 'initial_response':
+            await botBaileys.sendText(message.from, `Selamat datang di MenoPal. MenoPal adalah chatbot interaktif yang dapat membantu Anda dalam mengetahui dan menentukan gangguan pada menstruasi. Apakah Anda tertarik untuk menggunakan bot ini?`);
+            userStep = 'confirm_response';
             break;
 
 
-        case 'initial_response':
+        case 'confirm_response':
             if (positiveResponses.includes(command.toLowerCase())) {
                 await botBaileys.sendText(
                     message.from,
-                    `Baik ${message.from}, sebelum menggunakan fitur MenoPal ini, silahkan isi link berikut https://forms.gle/NBRcZ1yBZHuvnLgs5.`
+                    `Baik, sebelum menggunakan fitur MenoPal ini, silahkan isi link berikut https://forms.gle/dLKUdo3gvzdCFqnL9.`
                 );
 
-                // Set timeout for sending the poll after 20 seconds
+
                 setTimeout(async () => {
                     await botBaileys.sendPoll(message.from, 'Apakah Anda sudah mengisi Form:', {
                         options: ['Sudah', 'Belum'],
                         multiselect: false
                     });
-                    userStep = 'form_confirmation'; // Set the next step to handle the poll response
-                }, 20 * 1000); // 20 seconds delay
+                    userStep = 'form_confirmation';
+                }, 15 * 1000);
 
-                userStep = 'waiting_for_poll_response'; // Indicate waiting for the poll response
             } else {
                 await botBaileys.sendText(
                     message.from,
-                    'Terima kasih sudah menggunakan MenoPal.'
+                    'Terima kasih sudah menggunakan MenoPal. Semoga menstruasi anda tetap kondusif.'
                 );
                 userStep = 'end';
             }
@@ -78,7 +76,7 @@ botBaileys.on('message', async (message) => {
                 userStep = 'category_selection';
             } else if (command.toLowerCase() === 'belum') {
                 await botBaileys.sendText(message.from, 'Silakan isi form terlebih dahulu sebelum melanjutkan.');
-                userStep = 'end'; // End the interaction or redirect as needed
+                userStep = 'end';
             } else {
                 await botBaileys.sendText(message.from, 'Mohon pilih salah satu opsi: "Sudah" atau "Belum".');
             }
@@ -162,42 +160,149 @@ botBaileys.on('message', async (message) => {
         // Gangguan Lain Category
         case 'other_category':
             if (command === 'kram perut bagian bawah, nyeri punggung, mual muntah, diare') {
-                await botBaileys.sendText(message.from, '“Gangguan menstruasi berupa Dismenorea.Dismenorea merupakan salah satu masalah yang dihadapi wanita saat menstruasi, berupa sakit perut, kram, dan nyeri punggung adalah beberapa gejala yang dapat mempersulit aktivitas sehari-hari. Nyeri yang tajam dan sporadis serta kram di perut bagian bawah adalah gejala umum dismenorea, dan biasanya berpindah ke punggung, paha, selangkangan, dan vulva.  Biasanya dimulai sehari sebelum atau tepat sebelum aliran menstruasi dimulai, nyeri ini biasanya memuncak dalam sehari. Dan beberapa gejala lain seperti Sering buang air kecil (darah dalam urin), mual, muntah, diare, migrain, menggigil, kembung, nyeri payudara, sedih, dan mudah tersinggung adalah beberapa gejalanya.Upaya penanganan dismenorea :1. Kompres hangat2. Senam dismenorea3. Pengalihan rasa sakit4. Masase5. Relaksasi aromaterapi6. Pola makan sehat7. Obat pereda nyeriAda yang ingin ditanyakan?”');
+                await botBaileys.sendText(message.from,
+                    '“Gangguan menstruasi berupa Dismenorea.\n\n' +
+                    'Dismenorea merupakan salah satu masalah yang dihadapi wanita saat menstruasi, berupa sakit perut, kram, dan nyeri punggung adalah beberapa gejala yang dapat mempersulit aktivitas sehari-hari. Nyeri yang tajam dan sporadis serta kram di perut bagian bawah adalah gejala umum dismenorea, dan biasanya berpindah ke punggung, paha, selangkangan, dan vulva. Biasanya dimulai sehari sebelum atau tepat sebelum aliran menstruasi dimulai, nyeri ini biasanya memuncak dalam sehari. Dan beberapa gejala lain seperti:\n' +
+                    '1. Sering buang air kecil (darah dalam urin)\n' +
+                    '2. Mual\n' +
+                    '3. Muntah\n' +
+                    '4. Diare\n' +
+                    '5. Migrain\n' +
+                    '6. Menggigil\n' +
+                    '7. Kembung\n' +
+                    '8. Nyeri payudara\n' +
+                    '9. Sedih\n' +
+                    '10. Mudah tersinggung\n\n' +
+                    'Upaya penanganan dismenorea:\n' +
+                    '1. Kompres hangat\n' +
+                    '2. Senam dismenorea\n' +
+                    '3. Pengalihan rasa sakit\n' +
+                    '4. Masase\n' +
+                    '5. Relaksasi aromaterapi\n' +
+                    '6. Pola makan sehat\n' +
+                    '7. Obat pereda nyeri\n\n' +
+                    'Ada yang ingin ditanyakan?”'
+                );
                 userStep = 'inquiry';
             } else if (command === 'malas bergerak, nyeri payudara, muncul jerawat, nafsu makan meningkat') {
-                await botBaileys.sendText(message.from, '“Gangguan menstruasi berupa Premenstrual SyndromePremenstrual Syndrome (PMS) adalah kelainan di mana tubuh menunjukkan sejumlah gejala yang berhubungan dengan siklus menstruasi. Gejala sering kali mulai terlihat 7-10 hari sebelum dimulainya siklus menstruasi dan hilang begitu siklus menstruasi dimulai. Gejala Premenstrual Syndrome adalah :1. Fisik: Nyeri payudara, penambahan berat badan, sakit kepala, edema, kram perut, kembung, jerawat, nyeri otot, diare, atau bahkan sembelit adalah beberapa perubahan fisik yang berhubungan dengan PMS.2. Psikologis: kelupaan, kelelahan, kesulitan fokus, nafsu makan meningkat.3. Perilaku : Mudah tersinggung, menangis tersedu- sedu, cemas, susah tidur, gairah seks meningkat, dan depresi merupakan tanda-tanda perubahan emosi saat PMS.Upaya penanganan :PMS sulit dihindari karena tidak ada yang tahu apa penyebabnya. Mempertahankan gaya hidup sehat adalah pendekatan paling efektif untuk menurunkan peluang Anda terkena PMS.Ada yang ingin ditanyakan?”');
+                await botBaileys.sendText(message.from,
+                    '“Gangguan menstruasi berupa Premenstrual Syndrome (PMS).\n\n' +
+                    'Premenstrual Syndrome (PMS) adalah kelainan di mana tubuh menunjukkan sejumlah gejala yang berhubungan dengan siklus menstruasi. Gejala sering kali mulai terlihat 7-10 hari sebelum dimulainya siklus menstruasi dan hilang begitu siklus menstruasi dimulai. Gejala Premenstrual Syndrome adalah:\n' +
+                    '1. Fisik:\n' +
+                    '   - Nyeri payudara\n' +
+                    '   - Penambahan berat badan\n' +
+                    '   - Sakit kepala\n' +
+                    '   - Edema\n' +
+                    '   - Kram perut\n' +
+                    '   - Kembung\n' +
+                    '   - Jerawat\n' +
+                    '   - Nyeri otot\n' +
+                    '   - Diare\n' +
+                    '   - Sembelit\n\n' +
+                    '2. Psikologis:\n' +
+                    '   - Kelupaan\n' +
+                    '   - Kelelahan\n' +
+                    '   - Kesulitan fokus\n' +
+                    '   - Nafsu makan meningkat\n\n' +
+                    '3. Perilaku:\n' +
+                    '   - Mudah tersinggung\n' +
+                    '   - Menangis tersedu-sedu\n' +
+                    '   - Cemas\n' +
+                    '   - Susah tidur\n' +
+                    '   - Gairah seks meningkat\n' +
+                    '   - Depresi\n\n' +
+                    'Upaya penanganan:\n' +
+                    'PMS sulit dihindari karena tidak ada yang tahu apa penyebabnya. Mempertahankan gaya hidup sehat adalah pendekatan paling efektif untuk menurunkan peluang Anda terkena PMS.\n\n' +
+                    'Ada yang ingin ditanyakan?”'
+                );
                 userStep = 'inquiry';
             }
             break;
+
 
         // Amenorrhea Check
         case 'amenorrhea_check':
             if (command === 'pernah') {
                 await botBaileys.sendText(message.from, '“Gangguan menstruasi berupa Amenenorhea sekunder. Amemenorrhea sekunder adalah,  kondisi Ketika seorang Wanita yang sudah pernah mengalami menstruasi tidak menstruasi selama lebih dari tiga bulan berturu-turut.Diperlukan konsulasi ke dokter jika anda mengalami tanda-tanda diatas.Ada yang ingin ditanyakan?”');
             } else {
-                await botBaileys.sendText(message.from, '“Gangguan menstruasi berupa Amemenorhea primerAmenorea primer adalah kondisi ketika seorang wanita belum m engalami menstr asi pertamanya pada usia 15 tahun atau 3 tahun setelah menarche, meskipun sudah mengalami perkembangan normal dan karakteristik seksual sekunderDiperlukan konsulasi ke dokter jika anda mengalami tanda-tanda diatas.Ada yang ingin ditanyakan?”');
+                await botBaileys.sendText(message.from, '“Gangguan menstruasi berupa Amemenorhea primer Amenorea primer adalah kondisi ketika seorang wanita belum m engalami menstr asi pertamanya pada usia 15 tahun atau 3 tahun setelah menarche, meskipun sudah mengalami perkembangan normal dan karakteristik seksual sekunderDiperlukan konsulasi ke dokter jika anda mengalami tanda-tanda diatas.Ada yang ingin ditanyakan?”');
             }
             userStep = 'inquiry';
             break;
 
         // Inquiry Handling
         case 'inquiry':
-            if (command === 'yes') {
+            if (positiveResponses.includes(command)) {
                 await botBaileys.sendText(message.from, 'Baik, MenoPal akan menyambungkan ke customer service. Mohon tunggu.');
-                userStep = 'end';
+                userStep = 'customer_service';
+                setTimeout(async () => {
+                    await botBaileys.sendText(
+                        message.from,
+                        `Halo! Saya adalah customer service MenoPal. Saya akan membantu Anda lebih lanjut. Apakah ada yang ingin Anda tanyakan secara spesifik tentang kesehatan menstruasi atau gangguan tertentu yang Anda alami?`
+                    );
+                }, 5000);
+                userStep = 'awaiting_user_question';
             } else {
                 await botBaileys.sendText(message.from, 'Terima kasih telah menggunakan MenoPal. Anda dapat kembali ke menu utama jika ingin memeriksa kategori lainnya.');
                 userStep = 'end';
+                await botBaileys.sendText(
+                    message.from,
+                    `Agar kami mengetahui lebih lanjut tentang menstruasi Anda, kami berharap Anda dapat mengisi survei berikut:\n` +
+                    `https://forms.gle/NBRcZ1yBZHuvnLgs5`
+                );
+            }
+            break;
+
+        case 'awaiting_user_question':
+            if (command) {
+                await botBaileys.sendText(
+                    message.from,
+                    `Terima kasih atas pertanyaannya. Kami sedang meninjau dan akan memberikan informasi yang relevan secepatnya.`
+                );
+                userStep = 'end';
+            } else {
+                await botBaileys.sendText(
+                    message.from,
+                    `Maaf, kami belum menerima pertanyaan yang spesifik. Silakan tanyakan apa yang ingin Anda ketahui.`
+                );
+            }
+            break;
+
+        case 'awaiting_user_question':
+            if (command) {
+                await botBaileys.sendText(
+                    message.from,
+                    `Terima kasih atas pertanyaannya. Kami sedang meninjau dan akan memberikan informasi yang relevan secepatnya.`
+                );
+                userStep = 'end';
+            } else {
+                await botBaileys.sendText(
+                    message.from,
+                    `Maaf, kami belum menerima pertanyaan yang spesifik. Silakan tanyakan apa yang ingin Anda ketahui.`
+                );
             }
             break;
 
         case 'end':
-            awaitingResponse = false;
-            userStep = 'welcome';
+            await botBaileys.sendText(
+                message.from,
+                `Terimakasih atas waktunya, Agar kami mengetahui lebih lanjut tentang menstruasi Anda, kami berharap Anda dapat mengisi survei berikut:\n` +
+                `https://forms.gle/NBRcZ1yBZHuvnLgs5, semoga hari anda menyenangkan.`
+            );
+            userStep = 'initial_response';
             break;
 
+        // case 'survey':
+        //     await botBaileys.sendText(
+        //         message.from,
+        //         `Agar kami mengetahui lebih lanjut tentang menstruasi Anda, kami berharap Anda dapat mengisi survei berikut:\n` +
+        //         `https://forms.gle/NBRcZ1yBZHuvnLgs5`
+        //     );
+        //     userStep = 'initial_response';
+        //     break;
+
         default:
-            await botBaileys.sendText(message.from, 'Maaf, perintah tidak dikenali. Silakan pilih opsi yang tersedia.');
+            await botBaileys.sendText(message.from, 'Jika ada yang ingin ditanyakan, silakan ketik tanya.');
             break;
     }
 });

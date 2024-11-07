@@ -512,7 +512,6 @@ export class BaileysClass extends EventEmitter {
   };
 
   /**
-   * @deprecated
    * @param {string} number
    * @param {string} text
    * @param {string} footer
@@ -524,25 +523,27 @@ export class BaileysClass extends EventEmitter {
     number: string,
     text: string,
     footer: string = "",
-    buttons: any[]
+    buttons: { displayText: string }[]
   ): Promise<any> => {
     const numberClean = utils.formatPhone(number);
 
-    const templateButtons = buttons.map((btn, i) => ({
-      buttonId: `id-btn-${i}`, // Create a unique button ID for each button
-      buttonText: { displayText: btn.body },
-      type: 1,
-    }));
-
+    // Create button message with the Baileys compatible structure
     const buttonMessage = {
       text,
       footer,
-      buttons: templateButtons,
-      headerType: 1,
+      templateButtons: buttons.map((btn, i) => ({
+        index: i + 1,
+        quickReplyButton: {
+          displayText: btn.displayText,
+          id: `id-btn-${i + 1}`
+        }
+      }))
     };
 
+    // Ensure `sendMessage` can handle the new `templateButtons` structure
     return this.vendor.sendMessage(numberClean, buttonMessage);
   };
+
 
   /**
    *
