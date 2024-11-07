@@ -286,8 +286,7 @@ botBaileys.on('message', async (message) => {
         case 'end':
             await botBaileys.sendText(
                 message.from,
-                `Terimakasih atas waktunya, Agar kami mengetahui lebih lanjut tentang menstruasi Anda, kami berharap Anda dapat mengisi survei berikut:\n` +
-                `https://forms.gle/NBRcZ1yBZHuvnLgs5, semoga hari anda menyenangkan.`
+                `Terimakasih atas waktunya, semoga hari anda menyenangkan.`
             );
             userStep = 'initial_response';
             break;
