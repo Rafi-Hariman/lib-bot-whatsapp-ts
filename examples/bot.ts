@@ -25,12 +25,10 @@ app.get('/', (req, res) => {
 
 botBaileys.on('message', async (message) => {
     const command = message.body.toLowerCase().trim();
-
     switch (userStep) {
         case 'initial_response':
-            await botBaileys.sendText(message.from, `Selamat datang di MenoPal. MenoPal adalah chatbot interaktif yang dapat membantu Anda dalam mengetahui dan menentukan gangguan pada menstruasi.`);
-
-            // Kirimkan polling untuk konfirmasi minat menggunakan bot
+            await botBaileys.sendText(message.from, 'Selamat datang di MenoPal. MenoPal adalah chatbot interaktif yang dapat membantu Anda dalam mengetahui dan menentukan gangguan pada menstruasi.');
+            await botBaileys.sendText(message.from, 'Berikut adalah petunjuk penggunaan chatbot https://drive.google.com/drive/folders/1iZ8aJOVdzvaAS_gRmGBsucIcg_tjaGwG');
             await botBaileys.sendPoll(message.from, 'Apakah Anda tertarik untuk menggunakan bot ini?', {
                 options: ['Iya', 'Tidak'],
                 multiselect: false
@@ -42,7 +40,7 @@ botBaileys.on('message', async (message) => {
             if (command === 'iya') {
                 await botBaileys.sendText(
                     message.from,
-                    `Baik, sebelum menggunakan fitur MenoPal ini, silahkan isi link berikut https://forms.gle/dLKUdo3gvzdCFqnL9.`
+                    `Baik, sebelum menggunakan fitur MenoPal ini, silahkan isi link berikut https://forms.gle/nF38AbdCmaYEnB5eA.`
                 );
 
                 setTimeout(async () => {
@@ -305,7 +303,7 @@ botBaileys.on('message', async (message) => {
             } else if (command === 'tidak') {
                 await botBaileys.sendText(
                     message.from,
-                    'Terima kasih telah menggunakan MenoPal. Semoga hari Anda menyenangkan. Jika anda berkenan mengisi survei mengenai menstruasi perempuan , silakan klik link berikut: https://forms.gle/NBRcZ1yBZHuvnLgs5'
+                    'Terima kasih telah menggunakan MenoPal. Semoga hari Anda menyenangkan. Jika anda berkenan mengisi survei mengenai menstruasi perempuan , silakan klik link berikut: https://forms.gle/4BWp5FbztkXF5YVd7'
                 );
                 userStep = 'end';
             }
