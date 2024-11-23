@@ -1,6 +1,6 @@
 node_modules
-*_sessions
-baileys.log
+# *_sessions
+# baileys.log
 core.class.log
 db.json
 lib/
